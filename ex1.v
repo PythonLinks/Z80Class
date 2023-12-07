@@ -24,7 +24,9 @@ wire nM1;
 wire nWAIT;
 reg nINT;
 wire [2:0] TS;
-
+wire	   nBUSRQ;
+wire	   nBUSAK;
+   
 // Unit Under Test port map
 TV80_CPU
 	#(.RESET_VECTOR(16'h0000))
@@ -40,12 +42,20 @@ CPU_0 (
 	.nIORQ(nIORQ),
 	.nINT(nINT),
 	.nNMI(1'b1),
-	.nBUSRQ(1'b1),
-	.nBUSAK(),
+	.nBUSRQ(nBUSRQ),
+	.nBUSAK(nBUSAK),
 	.nWAIT(nWAIT),
 	.nM1(nM1),
 	.TS(TS));
 
+BUS bus (   .clock(CLK), 
+            .nBUSRQ(nBUSRQ), 
+            .nBUSAK(nBUSAK),
+            .nRD(nRD),
+            .nWR(nWR), 
+            .ADDR(ADDR),
+            .DQ(DQ));
+   
 wire RAM_4K_CS = ~(~nMREQ & ~ADDR[15] & ~ADDR[14] & ~ADDR[13] & ~ADDR[12]);
 
 RAM_4K M0(
@@ -56,27 +66,25 @@ RAM_4K M0(
 	.DQ(DQ));
 
 initial
-  $display("ADDR    DQ     A   I     PC DIH DIL 2 SUM ");
+  $display("ADDR    DQ     ACC    PC IR 1 2 SUM ");
    
 //Print out registers content at beginning of machine cycle
 //always @(negedge nM1) begin
 always @(*) begin   
    $display (ADDR, " ", 
      DQ, "  ",
-     CPU_0.CPU.A, " ",
-     CPU_0.CPU.I, " ", 	     
-     CPU_0.CPU.PC, " ", 	     
-     CPU_0.CPU.RegDIH, " ",
-     CPU_0.CPU.RegDIL, " ", 	     	     	     
-
-     M0.MEM[12'h11], " ", 
+     CPU_0.CPU.ACC, " ",
+     CPU_0.CPU.PC, " ",
+     CPU_0.CPU.IR, " ",	     	     
+     M0.MEM[12'h10], " ",
+     M0.MEM[12'h11], " ", 	     
      M0.MEM[12'h12]	     
 );
 end
 
 
 
-   
+   /*
 //Stop simulation when IO write -> IO:0x80 = 0xFF
 always @(posedge CLK) begin  //WAS FF not )0F
    if ((ADDR == 8'hFF) && //WHEN THE ADDRESS IS 0xFF 
@@ -86,7 +94,13 @@ always @(posedge CLK) begin  //WAS FF not )0F
    
      $finish;
 end
-
+    */
+   
+initial
+  begin
+  #1000; 
+  $finish();
+end
    
 initial	begin
 	CLK = 1'b0;
@@ -103,7 +117,7 @@ initial begin
 	nCLR = 1'b1;
 	WAIT(800);
 	$display("@%d: Simulation completed.", $time);
-	$finish;
+	//#1000 $finish;
 end
 
 initial begin

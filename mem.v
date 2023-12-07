@@ -45,13 +45,13 @@ task WR_MEM_W(input [15:0] DATA); /* Write word to the memory array */
    end   
 endtask
 
-
+/*
 always @ (*)
    if (DQ==118) begin
      $display ("SUM  = ", MEM[12'h12]);
-     $finish;
+     //$finish;
      end 
-   
+  */ 
 
 
 initial
@@ -60,16 +60,13 @@ initial
      wr_addr = 12'h10;     
      WR_MEM(12'd1);
      wr_addr = 12'h11;     
-     WR_MEM(12'd2);     
-
+     WR_MEM(12'd2);
+ 
      //NOW WRITE THE PROGRAM
 
      wr_addr = 12'd0;     
 //   `define LXI_H	8'b00100001     
      WR_MEM(8'b00100001);   //33 LXI_H HL POINTS TO ...
-//    `define LDA		8'b00111010
-//     WR_MEM(8'b00111010); // 58 MOV_A_M GET OPERAND
-
      
      wr_addr = 12'd1;
      WR_MEM(8'h10);   //16 HIGH BITS OF DATA

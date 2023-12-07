@@ -3,7 +3,7 @@
 rm -f ex1
 rm -f ex1.vcd
 
-iverilog -Wall -s EX1_tb -o ex1 -f tv80_src.cmd mem.v ex1.v
+iverilog -Wall -s EX1_tb -o ex1 -f tv80_src.cmd mem.v bus.v ex1.v
 
 if [ $? -eq 1 ]; then
     echo Source compilation failure
