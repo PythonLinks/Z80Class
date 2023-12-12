@@ -55,6 +55,12 @@ BUS bus (   .clock(CLK),
             .nWR(nWR), 
             .ADDR(ADDR),
             .DQ(DQ));
+
+initial
+  begin
+  //nBUSRQ = 1'b1;
+  //nBUSAK = 1'b1;
+  end
    
 wire RAM_4K_CS = ~(~nMREQ & ~ADDR[15] & ~ADDR[14] & ~ADDR[13] & ~ADDR[12]);
 
@@ -66,11 +72,11 @@ RAM_4K M0(
 	.DQ(DQ));
 
 initial
-  $display("ADDR    DQ     ACC    PC IR 1 2 SUM ");
+  $display("ADDR    DQ ACC    PC  IR   1   2   SUM ");
    
 //Print out registers content at beginning of machine cycle
-//always @(negedge nM1) begin
-always @(*) begin   
+always @(negedge nM1) begin
+//always @(*) begin   
    $display (ADDR, " ", 
      DQ, "  ",
      CPU_0.CPU.ACC, " ",

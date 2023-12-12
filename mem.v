@@ -58,7 +58,7 @@ initial
   begin
      //FIRST WRITE THE DATA
      wr_addr = 12'h10;     
-     WR_MEM(12'd1);
+     WR_MEM(12'd5);
      wr_addr = 12'h11;     
      WR_MEM(12'd2);
  
@@ -73,8 +73,6 @@ initial
      wr_addr = 12'd2;
      WR_MEM(8'h00);   //0 LOW BITS OF DATA
 
-
-
      wr_addr = 12'd3;          
 //   `define MOV_A_M 8'b01111110
      WR_MEM(8'b01111110); // 126 MOV_A_M GET OPERAND
@@ -87,17 +85,29 @@ initial
 //`    define ADD_M	8'b10000110     
      wr_addr = 12'd5;
      WR_MEM(8'b10000110);   //134 ADD_M
+
+
+//`    define ADD_M	8'b10000110     
+     wr_addr = 12'd6;
+     WR_MEM(8'b10000110);   //134 ADD_M
      
  // `define INX_H	8'b00100011        
-     wr_addr = 12'd6;
+     wr_addr = 12'd7;
      WR_MEM(8'b00100011);   //35 INX_H INCREMENT    
 
 //   `define MOV_M_A 8'b01110111     
-     wr_addr = 12'd7;
-     WR_MEM(8'b01110111); //119 MOV_M_A STORE
-     
-//   `define HLT		8'b01110110     
      wr_addr = 12'd8;
+     WR_MEM(8'b01110111); //119 MOV_M_A STORE     
+           
+
+     
+//   `define MOV_M_A 8'b01110111     
+     wr_addr = 12'd9;
+     WR_MEM(8'b01110111); //119 MOV_M_A STORE          
+     
+
+   `define HLT		8'b01110110     
+     wr_addr = 12'd10;
      WR_MEM(8'b01110110);     //118 HLT HALT
 
      
