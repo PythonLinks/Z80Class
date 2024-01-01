@@ -1,0 +1,35 @@
+I really missed your last class.  The microprocessor stuff comes
+easily to me, this timing stuff I am having a much harder time with.
+I think that means i have more to learn here.
+
+So here is the current problem which I am struggling with.
+if you type
+./run
+Then at time 705 (first column), nBUSRQ (second to last column) goes negative.
+at time 745 nBUSAK goes negative (last Column)
+
+  TIME   ADDR DQ ACC    PC  IR SUM nBUSRQ nBUSAK
+   705    18   z    9     9 119   9     0     1
+   715     9   z    9     9 119   9     0     1
+   725     9 118    9     9 119   9     0     1
+   735     9   z    9    10 118   9     0     1
+   745     9   z    9    10 118   9     0     1
+ADDRESS     z ADDR=   10 DQ= 111
+ADDRESS   170 ADDR=    X DQ= 111
+   755     X 111    9    10 118   9     0     0
+
+Then in file bus.v I set the address and data, and display them.
+
+always @(negedge nBUSAK)
+  begin
+     data    <=  8'd111;     
+     #5 address <= 16'd170;
+     #10 $display ("ADDRESS ", address, " ADDR=", ADDR, " DQ= ", DQ);
+     #15 $display ("ADDRESS ", address, " ADDR=", ADDR, " DQ= ", DQ);             
+  end
+
+   assign ADDR = address;
+   assign DQ = data;
+
+Bus as you can see the ADDR goes to X.
+What am I doing wrong?

@@ -2,9 +2,11 @@
 
 `timescale 1ns/100ps
 
-   
+  
 module RAM_4K(A, nOE, nWE, nCS, DQ);
 
+
+ 
 input [11:0] A;
 input nOE, nWE, nCS;
 inout [7:0] DQ;
@@ -20,10 +22,17 @@ reg [7:0] MEM [4095:0];
    assign DQ = show ? result : 8'hzz;
    assign result = MEM[A] ;
    
-always @(nOE or nWE or DQ)
-    if (!nCS & !nWE)
+always @(nCS or nOE or nWE or DQ) begin
+     
+    if (~nCS & ~nWE) begin
+     //$display("WR %5t %h:%h(%d)", $time, A, DQ, DQ, ~nCS, ~nWE);
+       
 	MEM[A] = DQ;
+
+    end
+ end
           
+
    
   
 //---------------------------------------------------------
@@ -53,7 +62,8 @@ always @ (*)
      end 
   */ 
 
-
+`include  "../tv80_lib/8085_instr_set.v" 
+   
 initial
   begin
      //FIRST WRITE THE DATA
@@ -65,51 +75,34 @@ initial
      //NOW WRITE THE PROGRAM
 
      wr_addr = 12'd0;     
-//   `define LXI_H	8'b00100001     
-     WR_MEM(8'b00100001);   //33 LXI_H HL POINTS TO ...
-     
+     WR_MEM(`LXI_H);   //33 LOAD FROM THE ADDRESS     
      wr_addr = 12'd1;
-     WR_MEM(8'h10);   //16 HIGH BITS OF DATA
+     WR_MEM(8'h10);   //16 LOW BITS OF DATA
      wr_addr = 12'd2;
-     WR_MEM(8'h00);   //0 LOW BITS OF DATA
+     WR_MEM(8'h00);   //0 HIGH BITS OF DATA
 
      wr_addr = 12'd3;          
-//   `define MOV_A_M 8'b01111110
-     WR_MEM(8'b01111110); // 126 MOV_A_M GET OPERAND
+     WR_MEM(`MOV_A_M); // 126 
 
      
  // `define INX_H	8'b00100011        
      wr_addr = 12'd4;
      WR_MEM(8'b00100011);   //35 INX_H INCREMENT
 
-//`    define ADD_M	8'b10000110     
      wr_addr = 12'd5;
-     WR_MEM(8'b10000110);   //134 ADD_M
+     WR_MEM(`ADD_M);   //134 ADD_M
 
-
-//`    define ADD_M	8'b10000110     
      wr_addr = 12'd6;
-     WR_MEM(8'b10000110);   //134 ADD_M
+     WR_MEM(`ADD_M);   //134 ADD_M
      
- // `define INX_H	8'b00100011        
      wr_addr = 12'd7;
-     WR_MEM(8'b00100011);   //35 INX_H INCREMENT    
+     WR_MEM(`INX_H);   //35 INX_H INCREMENT
 
-//   `define MOV_M_A 8'b01110111     
      wr_addr = 12'd8;
-     WR_MEM(8'b01110111); //119 MOV_M_A STORE     
-           
+     WR_MEM(`MOV_M_A);     //119 MOV_M_A STORE          
 
-     
-//   `define MOV_M_A 8'b01110111     
      wr_addr = 12'd9;
-     WR_MEM(8'b01110111); //119 MOV_M_A STORE          
-     
-
-   `define HLT		8'b01110110     
-     wr_addr = 12'd10;
-     WR_MEM(8'b01110110);     //118 HLT HALT
-
+     WR_MEM(`HLT);     //118 HLT HALT
      
      $display ("OP1  = ", MEM[12'h10]);
      $display ("OP2  = ", MEM[12'h11]);

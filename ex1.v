@@ -58,7 +58,7 @@ BUS bus (   .clock(CLK),
 
 initial
   begin
-  //nBUSRQ = 1'b1;
+  //nBUSRQ = 1'b0;
   //nBUSAK = 1'b1;
   end
    
@@ -72,19 +72,25 @@ RAM_4K M0(
 	.DQ(DQ));
 
 initial
-  $display("ADDR    DQ ACC    PC  IR   1   2   SUM ");
+  $display("   TIME   ADDR DQ ACC    PC  IR SUM nBUSRQ nBUSAK");
+
+always @ (posedge CLK)
+  if ($realtime == 705)   
+  $display("   TIME   ADDR DQ ACC    PC  IR SUM nBUSRQ nBUSAK");   
    
 //Print out registers content at beginning of machine cycle
-always @(negedge nM1) begin
-//always @(*) begin   
-   $display (ADDR, " ", 
+//always @(negedge nM1) begin
+always @(posedge CLK) begin   
+   $display ("%6d",
+      $realtime, " ",
+     ADDR, " ", 
      DQ, "  ",
      CPU_0.CPU.ACC, " ",
      CPU_0.CPU.PC, " ",
      CPU_0.CPU.IR, " ",	     	     
-     M0.MEM[12'h10], " ",
-     M0.MEM[12'h11], " ", 	     
-     M0.MEM[12'h12]	     
+     M0.MEM[12'h12], "     ",
+     nBUSRQ,"     ",
+     nBUSAK	     	     
 );
 end
 
